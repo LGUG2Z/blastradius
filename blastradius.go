@@ -1,11 +1,12 @@
 package blastradius
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"strings"
 	"os"
-	"encoding/json"
+	"strings"
+
 	"github.com/AlexsJones/kepler/commands/node"
 )
 
@@ -48,6 +49,9 @@ func Calculate(metarepo string, project string) ([]string, error) {
 
 	blastRadius := make(map[string]map[string]bool)
 
+	// In order to get all the packages that are used by the given project
+	// it is needed to search through each package.json locally
+	// to create a dep tree that way.
 	for repo, pkg := range repos {
 		for dep := range pkg.Dependencies {
 			if _, exists := repos[dep]; exists {
@@ -67,4 +71,3 @@ func Calculate(metarepo string, project string) ([]string, error) {
 
 	return output, nil
 }
-
