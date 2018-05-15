@@ -7,11 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/AlexsJones/kepler/commands/node"
+	nodejs "github.com/AlexsJones/kepler/types"
 )
 
-func loadRepos(metarepo string) (map[string]node.PackageJSON, error) {
-	repos := make(map[string]node.PackageJSON)
+func loadRepos(metarepo string) (map[string]nodejs.PackageJSON, error) {
+	repos := make(map[string]nodejs.PackageJSON)
 
 	repositories, err := ioutil.ReadDir(metarepo)
 	if err != nil {
@@ -27,7 +27,7 @@ func loadRepos(metarepo string) (map[string]node.PackageJSON, error) {
 					return nil, fmt.Errorf("couldn't read package.json file in %s: %s", repo.Name(), err)
 				}
 
-				var tmp node.PackageJSON
+				var tmp nodejs.PackageJSON
 				if err := json.Unmarshal(bytes, &tmp); err != nil {
 					return nil, fmt.Errorf("couldn't read package.json file in %s: %s", repo.Name(), err)
 				}
