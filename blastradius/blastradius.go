@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"errors"
-	nodejs "github.com/AlexsJones/kepler/types"
+	nodejs "github.com/AlexsJones/kepler/commands/node"
 	"os/exec"
 	"runtime"
 	"sync"
