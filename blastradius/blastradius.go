@@ -9,16 +9,18 @@ import (
 
 	"errors"
 	nodejs "github.com/AlexsJones/kepler/commands/node"
+	"github.com/spf13/afero"
 	"os/exec"
 	"runtime"
 	"sync"
 	"syscall"
 )
 
-func loadRepos(metarepo string) (map[string]nodejs.PackageJSON, error) {
+func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, error) {
 	repos := make(map[string]nodejs.PackageJSON)
 
-	repositories, err := ioutil.ReadDir(metarepo)
+	repositories, err := afero.ReadDir(fs, metarepo)
+
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +48,8 @@ func loadRepos(metarepo string) (map[string]nodejs.PackageJSON, error) {
 }
 
 // Calculate will identify other projects in the meta-repo that could be impacted by changes the given project
-func Calculate(metarepo string, project string) ([]string, error) {
-	repos, err := loadRepos(metarepo)
+func Calculate(fs afero.Fs, metarepo string, project string) ([]string, error) {
+	repos, err := loadRepos(fs, metarepo)
 	if err != nil {
 		return nil, err
 	}
