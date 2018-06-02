@@ -1,13 +1,17 @@
 package main
 
 import (
+	"os"
+
 	"github.com/LGUG2Z/blastradius/blastradius"
 	"github.com/fatih/color"
-	"os"
+	"github.com/spf13/afero"
 )
 
 func main() {
-	projects, err := blastradius.RunTestsOn(os.Args[1], "yarn", "test")
+	fs := afero.NewOsFs()
+
+	projects, err := blastradius.RunTestsOn(fs, os.Args[1], "yarn", "test")
 	if err != nil {
 		color.Red("Could not load project: %v", err)
 		os.Exit(1)

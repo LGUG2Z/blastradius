@@ -3,17 +3,16 @@ package blastradius
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 
 	"errors"
-	nodejs "github.com/AlexsJones/kepler/commands/node"
-	"github.com/spf13/afero"
 	"os/exec"
 	"runtime"
 	"sync"
 	"syscall"
+
+	nodejs "github.com/AlexsJones/kepler/commands/node"
+	"github.com/spf13/afero"
 )
 
 func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, error) {
@@ -28,8 +27,8 @@ func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, err
 	for _, repo := range repositories {
 		if repo.IsDir() && !strings.HasPrefix(repo.Name(), ".") {
 			packageJSONfile := fmt.Sprintf("%s/%s/%s", metarepo, repo.Name(), "package.json")
-			if _, err := os.Stat(packageJSONfile); err == nil {
-				bytes, err := ioutil.ReadFile(packageJSONfile)
+			if _, err := fs.Stat(packageJSONfile); err == nil {
+				bytes, err := afero.ReadFile(fs, packageJSONfile)
 				if err != nil {
 					return nil, fmt.Errorf("couldn't read package.json file in %s: %s", repo.Name(), err)
 				}
@@ -93,8 +92,8 @@ type TestedProject struct {
 
 // RunTestsOn will test the given project
 // and all projects that use the given project
-func RunTestsOn(project string, command ...string) (chan TestedProject, error) {
-	projects, err := Calculate(".", project)
+func RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProject, error) {
+	projects, err := Calculate(fs, ".", project)
 	if err != nil {
 		return nil, err
 	}
