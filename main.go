@@ -10,7 +10,7 @@ import (
 
 func main() {
 	fs := afero.NewOsFs()
-	b := blastradius.Blaster{}
+	b := blastradius.Calculator{}
 
 	projects, err := b.RunTestsOn(fs, os.Args[1], "yarn", "test")
 	if err != nil {

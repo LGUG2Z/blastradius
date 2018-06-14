@@ -15,10 +15,15 @@ import (
 	"github.com/spf13/afero"
 )
 
-type Blaster struct{}
 
-func NewBlaster() *Blaster {
-	return &Blaster{}
+type BlastRadiusCalculator interface {
+	Calculate(fs afero.Fs, metarepo, project string) ([]string, error)
+}
+
+type Calculator struct{}
+
+func NewCalculator() *Calculator {
+	return &Calculator{}
 }
 
 func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, error) {
@@ -53,7 +58,7 @@ func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, err
 }
 
 // Calculate will identify other projects in the meta-repo that could be impacted by changes the given project
-func (b *Blaster) Calculate(fs afero.Fs, metarepo string, project string) ([]string, error) {
+func (c *Calculator) Calculate(fs afero.Fs, metarepo string, project string) ([]string, error) {
 	repos, err := loadRepos(fs, metarepo)
 	if err != nil {
 		return nil, err
@@ -98,8 +103,8 @@ type TestedProject struct {
 
 // RunTestsOn will test the given project
 // and all projects that use the given project
-func (b *Blaster) RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProject, error) {
-	projects, err := b.Calculate(fs, ".", project)
+func (c *Calculator) RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProject, error) {
+	projects, err := c.Calculate(fs, ".", project)
 	if err != nil {
 		return nil, err
 	}
