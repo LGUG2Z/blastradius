@@ -15,6 +15,8 @@ import (
 	"github.com/spf13/afero"
 )
 
+type Blaster struct{}
+
 func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, error) {
 	repos := make(map[string]nodejs.PackageJSON)
 
@@ -47,7 +49,7 @@ func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, err
 }
 
 // Calculate will identify other projects in the meta-repo that could be impacted by changes the given project
-func Calculate(fs afero.Fs, metarepo string, project string) ([]string, error) {
+func (b *Blaster) Calculate(fs afero.Fs, metarepo string, project string) ([]string, error) {
 	repos, err := loadRepos(fs, metarepo)
 	if err != nil {
 		return nil, err
@@ -92,8 +94,8 @@ type TestedProject struct {
 
 // RunTestsOn will test the given project
 // and all projects that use the given project
-func RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProject, error) {
-	projects, err := Calculate(fs, ".", project)
+func (b *Blaster) RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProject, error) {
+	projects, err := b.Calculate(fs, ".", project)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +107,7 @@ func RunTestsOn(fs afero.Fs, project string, command ...string) (chan TestedProj
 		wg.Add(len(projects))
 		for _, p := range projects {
 			go func(p string, wg *sync.WaitGroup, ch chan TestedProject) {
-				ret, err := executeTests(p, "npm", "test")
+				ret, err := executeTests(p, "yarn", "test")
 				if err != nil {
 					// Not sure what to do here
 				}

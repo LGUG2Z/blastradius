@@ -10,8 +10,9 @@ import (
 
 func main() {
 	fs := afero.NewOsFs()
+	b := blastradius.Blaster{}
 
-	projects, err := blastradius.RunTestsOn(fs, os.Args[1], "yarn", "test")
+	projects, err := b.RunTestsOn(fs, os.Args[1], "yarn", "test")
 	if err != nil {
 		color.Red("Could not load project: %v", err)
 		os.Exit(1)
