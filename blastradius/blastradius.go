@@ -16,7 +16,7 @@ import (
 )
 
 
-type BlastRadiusCalculator interface {
+type RadiusCalculator interface {
 	Calculate(fs afero.Fs, metarepo, project string) ([]string, error)
 }
 
