@@ -17,6 +17,10 @@ import (
 
 type Blaster struct{}
 
+func NewBlaster() *Blaster {
+	return &Blaster{}
+}
+
 func loadRepos(fs afero.Fs, metarepo string) (map[string]nodejs.PackageJSON, error) {
 	repos := make(map[string]nodejs.PackageJSON)
 
